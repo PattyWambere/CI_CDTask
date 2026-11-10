@@ -1,0 +1,41 @@
+pipeline{
+    agent any
+
+    stages{
+        stage('Checkout'){
+            steps{
+                echo 'downloading HTML codes'
+                checkout scm
+            }
+        }
+
+        stage('Build'){
+            steps{
+                echo 'Building the HTML project'
+                bat 'dir'
+            }
+        }
+
+        stage('Docker Build'){
+            steps{
+                echo 'Building the Docker image'
+                bat 'docker build -t jenkins-html-project .'
+            }
+        }
+
+        stage('Deploy'){
+            steps{
+                echo 'Deploying HTML website'
+                bat 'docker run -d -p 8081:80 jenkins-html-project'
+            }
+        }
+    }
+
+    post{
+        success{
+            echo 'Pipeline completed successfully!'
+        }failure{
+            echo 'Pipeline failed!'
+        }
+    }
+}
